@@ -1,0 +1,22 @@
+{
+  "id": null,
+  "callerAddress": "0xd6f9f4fddab5d0e4141e2d64b202ddd0da4fc366",
+  "timestamp": 1668598791846,
+  "cmd": "fake",
+  "indexValue": "0xd6f9f4fddab5d0e4141e2d64b202ddd0da4fc366_R9",
+  "metadata": "",
+  "clearanceOrder": 171,
+  "sigClient": {
+    "r": "fff308e55c3c02b26bfda1f58667703337b6eed6f00849ff2277d610f19c8512",
+    "s": "5851e6dc8a17598481e66d35894ca36bb54d02f77afb9f4c99361ee9b464c64f",
+    "v": "1b"
+  },
+  "timestampSPO": 1668598792103,
+  "result": "ok",
+  "sigServer": {
+    "r": "5096cda085c6c01dcfc17b5aacf4667175a4227eccd344fa37280ed18cbc5523",
+    "s": "5bbe654a8fa5860d268ccb633d2e7cec95e844a37383a3ca27926155b5b437a5",
+    "v": "1b"
+  },
+  "secondPart": "0ca561b6098951ec859bdd2549410c7960144bcc39430650086b34eba65e2faf"
+}
