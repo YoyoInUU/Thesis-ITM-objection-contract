@@ -1,5 +1,4 @@
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.7;
+pragma solidity >= 0.4.14 < 0.6.0;
 
 import "./Util.sol";
 import "./Models.sol";
@@ -111,12 +110,6 @@ contract LedgerBooster {
 
         // 驗證merkleProof的簽章是否正確
         require(Util.verifySignature(Util.formatMerkleProof(merkleProofIndexAndClearnaceOrder, _slice, _pbPairIndex, _pbPbpairKey, _pbpairValue), Util.toSignatureUint8(merkleProofSignature[0]), merkleProofSignature[1], merkleProofSignature[2], spoServerWalletAddress), "MERKELPROOF_SIGNATURE_ERROR");
-
-        /* TODO
-        1. Root hash does not match error
-        2.Receipt missed error
-        3.Receipt hash value does not match error
-        */
 
         // 驗證receipt中的co與merkleProof的是否相同
         require(keccak256(abi.encodePacked(co)) == keccak256(abi.encodePacked(Util.uInt2Str(uint256(merkleProofIndexAndClearnaceOrder[1])))), "CLEARANCE_ORDER_ERROR");

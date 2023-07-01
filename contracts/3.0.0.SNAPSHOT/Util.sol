@@ -1,12 +1,9 @@
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.7;
-
-import "@openzeppelin/contracts/utils/Strings.sol";
+pragma solidity >= 0.4.14 < 0.6.0;
 
 library Util {
 
     function toEthSignedMessageHash(bytes memory s) internal pure returns (bytes32) {
-        return keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n", Strings.toString(s.length), s));
+        return keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n", uInt2Str(s.length), s));
     }
 
     function splitSignature(bytes memory sig) internal pure returns (bytes32 r, bytes32 s, uint8 v) {
