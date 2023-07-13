@@ -180,7 +180,7 @@ library Util {
         for (uint8 j = 0; j < _pbPbpairKey.length; j++) {
             pbpairBytes = abi.encodePacked(pbpairBytes, uInt2Str(hexToUint(_pbPairIndex[j])), bytes32ToBytes(_pbPbpairKey[j]), bytes32ToBytes(_pbpairValue[j]));
         }
-        return keccak256(abi.encodePacked(slice, pbpairBytes, uInt2Str(uint256(indexAndClearnaceOrder[1]))));
+        return toEthSignedMessageHash(abi.encodePacked(slice, pbpairBytes, uInt2Str(uint256(indexAndClearnaceOrder[1]))));
     }
 
     function bytes32ToBytes(bytes32 data) internal pure returns (bytes memory) {
