@@ -1,5 +1,6 @@
 pragma solidity >= 0.4.14 < 0.6.0;
 
+import "./LedgerBooster.sol";
 import "./Util.sol";
 import "./Models.sol";
 import "./SafeMath.sol";
@@ -11,8 +12,7 @@ contract Objection {
     address public itmWalletAddress;
     address public spoServerWalletAddress;
 
-    uint256 public clearanceOrder;
-    mapping(uint256 => Models.ClearanceRecord) public clearanceRecords;
+    LedgerBooster public ledgerBooster;
 
     mapping(bytes32 => Models.ObjectionRecord) public objectionRecords;
 
@@ -37,20 +37,20 @@ contract Objection {
     // _itmWalletAddress: 以 ITM 帳號 deploy contract，後續須由此帳號加值 txCount
     // _spoServerWalletAddress: SPO Server 須使用此帳號進行存證服務
     // _maxTxCount: 初始 maxTxCount
-    constructor(address _itmWalletAddress, address _spoServerWalletAddress, uint256 _maxTxCount) public {
+    constructor(address _itmWalletAddress, address _spoServerWalletAddress, uint256 _maxTxCount, address _ledgerBooster) public {
         itmWalletAddress = _itmWalletAddress;
         spoServerWalletAddress = _spoServerWalletAddress;
 
-        // 設定創世樹
-        clearanceOrder = 1;
-        clearanceRecords[0].clearanceOrder = 0;
-        clearanceRecords[0].rootHash = keccak256(abi.encodePacked(""));
-        clearanceRecords[0].createTime = block.timestamp * 1000;
-        clearanceRecords[0].chainHash = keccak256(abi.encodePacked("ITM_LB"));
-        clearanceRecords[0].description = "ITM_LEDGER_BOOSTER";
+        ledgerBooster = LedgerBooster(_ledgerBooster);
 
         maxTxCount = _maxTxCount;
         txCount = 0;
+    }
+
+    // 獲取LedgerBooster中的clearanceRecords
+    function getRootHash(uint256 clearanceOrder_) public view returns(bytes32) {
+        (uint256 clearanceOrder, bytes32 rootHash, uint256 createTime, bytes32 chainHash, string memory description) = ledgerBooster.clearanceRecords(clearanceOrder_);
+        return rootHash;
     }
 
     // objectionReceipt
@@ -87,7 +87,7 @@ contract Objection {
 
         // 驗證receipt中的co與merkleProof的是否相同
         require(keccak256(abi.encodePacked(co)) == keccak256(abi.encodePacked(Util.uInt2Str(uint256(merkleProofIndexAndClearnaceOrder[1])))), "CLEARANCE_ORDER_ERROR");
-        if (!Util.checkSliceIsRootHash(_slice, uint256(merkleProofIndexAndClearnaceOrder[0]), clearanceRecords[uint256(merkleProofIndexAndClearnaceOrder[1])].rootHash)) {
+        if (!Util.checkSliceIsRootHash(_slice, uint256(merkleProofIndexAndClearnaceOrder[0]), getRootHash(uint256(merkleProofIndexAndClearnaceOrder[1])))) {
             objectionRecords[_hash].objectionStatus = Models.ObjectionStatus.ROOT_HASH_NOT_MATCH_ERROR;
             return false;
         }
