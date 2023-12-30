@@ -13,6 +13,7 @@ contract Objection {
     address public spoServerWalletAddress;
 
     LedgerBooster public ledgerBooster;
+    event Transfer(address indexed to, uint amount, uint balance);
 
     mapping(bytes32 => Models.ObjectionRecord) public objectionRecords;
 
@@ -37,7 +38,7 @@ contract Objection {
     // _itmWalletAddress: 以 ITM 帳號 deploy contract，後續須由此帳號加值 txCount
     // _spoServerWalletAddress: SPO Server 須使用此帳號進行存證服務
     // _maxTxCount: 初始 maxTxCount
-    constructor(address _itmWalletAddress, address _spoServerWalletAddress, uint256 _maxTxCount, address _ledgerBooster) public {
+    constructor(address _itmWalletAddress, address _spoServerWalletAddress, uint256 _maxTxCount, address _ledgerBooster) public payable {
         itmWalletAddress = _itmWalletAddress;
         spoServerWalletAddress = _spoServerWalletAddress;
 
@@ -67,7 +68,7 @@ contract Objection {
         bytes32[] memory _pbPbpairKey,
         bytes32[] memory _pbpairValue,
         bytes32[] memory merkleProofSignature
-        ) public returns (bool){
+        ) public payable returns (bool){
 
         // 先驗證receipt簽章，並建立receipt digest的資訊
         string memory digest = Util.formatReceipt(indexValue, co, secondPart);
@@ -114,6 +115,9 @@ contract Objection {
             return false;
         } else {
             objectionRecords[_hash].objectionStatus = Models.ObjectionStatus.OK;
+            address payable addr = Util.splitAddr(indexValue);
+            addr.transfer(0.01 ether);
+            emit Transfer(addr, 0.01 ether, address(this).balance);
             return true;
         }
 

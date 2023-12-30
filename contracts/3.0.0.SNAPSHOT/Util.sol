@@ -207,4 +207,49 @@ library Util {
         return uint8(v[31]);
     }
 
+    function splitAddr(string memory s) public pure returns (address payable _parsedAddress) {
+        bytes memory sBytes = bytes(s);
+        uint256 underscoreIndex = 0;
+
+        // Find the position of the underscore
+        for (uint256 i = 0; i < sBytes.length; i++) {
+            if (sBytes[i] == "_") {
+                underscoreIndex = i;
+                break;
+            }
+        }
+
+        bytes memory l;
+
+        // If no underscore found, get the whole string
+        // Otherwise extract the substring before underscore
+        if (underscoreIndex == 0) {
+            l = sBytes;
+        } else {
+            l = new bytes(underscoreIndex);
+            for (uint256 i = 0; i < underscoreIndex; i++) {
+                l[i] = sBytes[i];
+            }
+        }
+        uint160 iaddr = 0;
+        uint160 b1;
+        uint160 b2;
+        for (uint i = 2; i < 2 + 2 * 20; i += 2) {
+            iaddr *= 256;
+            b1 = uint160(uint8(l[i]));
+            b2 = uint160(uint8(l[i + 1]));
+            if ((b1 >= 97) && (b1 <= 102)) {
+                b1 -= 87;
+            } else if ((b1 >= 48) && (b1 <= 57)) {
+                b1 -= 48;
+            }
+            if ((b2 >= 97) && (b2 <= 102)) {
+                b2 -= 87;
+            } else if ((b2 >= 48) && (b2 <= 57)) {
+                b2 -= 48;
+            }
+            iaddr += (b1 * 16 + b2);
+        }
+        return address(iaddr);
+    }
 }
